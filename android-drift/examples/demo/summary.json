@@ -1,0 +1,23 @@
+{
+  "aut_f1": 0.18054455067620426,
+  "queried_labels": 63,
+  "initial_fit_labels": 1514,
+  "initial_calibration_labels": 323,
+  "initial_monitor_labels": 323,
+  "initial_train_seconds": 0.03004109999983484,
+  "total_update_seconds": 0.0457795999998325,
+  "future_vectors_matching_initial_fit": 528,
+  "data_sha256": "20512e3dbb766ad8493ef0e7b674aa94d7f407e881e53ef0be0a12471f0e0d25",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.3.5",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "notes": [
+    "Demo results are not Android malware research evidence.",
+    "Memory cap applies to replay buffer, not offline dataset/evaluator RAM.",
+    "Fixed initial calibration may become stale under drift; no validity guarantee under distribution shift.",
+    "Initial split is stratified within initial period; no hyperparameter tuning or temporal validation implemented.",
+    "EWC re-anchors to previous model each update; not multi-task Fisher accumulation.",
+    "Hybrid uses uncertainty, not paper pseudo-loss; distance is not CADE.",
+    "Duplicate vectors are counted, not automatically removed; audit real data before research use."
+  ]
+}

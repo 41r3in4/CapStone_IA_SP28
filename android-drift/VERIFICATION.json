@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-23",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.3.5",
+  "tests": "8 unittest tests passed; all 7 updater paths exercised",
+  "demo": "20 synthetic months; 12 initial months, 8 test months",
+  "suite": "7 configurations completed on synthetic data",
+  "importer": "dense numeric monthly NPZ, zero/nonzero mapping, earliest-vector dedup smoke-tested",
+  "not_verified": [
+    "Real Android datasets",
+    "Sparse NPZ adapter path requiring optional SciPy",
+    "Browser rendering on user machine",
+    "Full 3-budget/5-seed grid"
+  ]
+}

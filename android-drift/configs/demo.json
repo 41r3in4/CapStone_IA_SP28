@@ -1,0 +1,19 @@
+{
+  "data": "data/demo.csv",
+  "output": "runs/demo",
+  "initial_months": 12,
+  "budget": 0.05,
+  "seed": 42,
+  "hidden": 24,
+  "epochs": 24,
+  "update_epochs": 10,
+  "batch_size": 64,
+  "learning_rate": 0.03,
+  "memory_size": 256,
+  "fisher_samples": 64,
+  "ewc_lambda": 4.0,
+  "reg_lambda": 0.5,
+  "weights": [0.5, 0.25, 0.25],
+  "selector": "hybrid",
+  "updater": "replay_ewc_reg"
+}

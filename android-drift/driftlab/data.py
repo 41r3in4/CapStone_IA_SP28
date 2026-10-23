@@ -21,6 +21,8 @@ def load_csv(path):
     with path.open(encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f)
         names = reader.fieldnames or []
+        if len(names) != len(set(names)):
+            raise ValueError('Duplicate CSV columns')
         if not {"sample_id", "month", "label"}.issubset(names):
             raise ValueError("CSV requires sample_id, month, label, plus f_* columns")
         features = [k for k in names if k.startswith("f_")]
@@ -31,9 +33,9 @@ def load_csv(path):
         raise ValueError("Empty dataset")
     ids = np.array([r["sample_id"] for r in rows])
     months = np.array([r["month"] for r in rows])
-    if any(not s for s in ids) or len(set(ids)) != len(ids):
+    if any(not s.strip() for s in ids) or len(set(ids)) != len(ids):
         raise ValueError("IDs must be nonempty and globally unique")
-    if any(not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", m) for m in months):
+    if any(not re.fullmatch(r"[0-9]{4}-(0[1-9]|1[0-2])", m) or m.startswith('0000') for m in months):
         raise ValueError("Invalid month; expected YYYY-MM")
     if any(r["label"] not in {"0", "1"} for r in rows):
         raise ValueError("Labels must be exactly 0 or 1")
@@ -42,6 +44,43 @@ def load_csv(path):
         raise ValueError("Features contain NaN or infinity")
     y = np.array([int(r["label"]) for r in rows])
     return Dataset(ids, months, X, y, features, hashlib.sha256(path.read_bytes()).hexdigest())
+
+
+def load_sparse(path):
+    """Numeric CSR NPZ plus metadata.csv/features.json; no object pickle or densify."""
+    import json
+    from scipy import sparse
+    root = Path(path)
+    matrix = sparse.load_npz(root / 'matrix.npz').tocsr().astype(np.float64)
+    matrix.sum_duplicates(); matrix.eliminate_zeros(); matrix.sort_indices()
+    with (root / 'metadata.csv').open(encoding='utf-8-sig', newline='') as stream:
+        reader = csv.DictReader(stream)
+        if not {'sample_id', 'month', 'label'}.issubset(reader.fieldnames or []):
+            raise ValueError('Sparse metadata requires sample_id, month, label')
+        rows = list(reader)
+    features = json.loads((root / 'features.json').read_text(encoding='utf-8'))
+    ids = np.array([r['sample_id'] for r in rows])
+    months = np.array([r['month'] for r in rows])
+    if (not rows or matrix.shape != (len(rows), len(features)) or not features
+            or any(not isinstance(f, str) or not f.startswith('f_') for f in features)
+            or len(set(features)) != len(features)):
+        raise ValueError('Invalid sparse shape or features')
+    if any(not i.strip() for i in ids) or len(set(ids)) != len(ids):
+        raise ValueError('IDs must be nonempty and globally unique')
+    if any(not re.fullmatch(r'[0-9]{4}-(0[1-9]|1[0-2])', m) or m.startswith('0000') for m in months):
+        raise ValueError('Invalid month')
+    if any(r['label'] not in ('0', '1') for r in rows):
+        raise ValueError('Labels must be exactly 0 or 1')
+    if not np.isfinite(matrix.data).all():
+        raise ValueError('Features contain NaN or infinity')
+    digest = hashlib.sha256()
+    for name in ('matrix.npz', 'metadata.csv', 'features.json'):
+        digest.update(name.encode()); digest.update((root / name).read_bytes())
+    return Dataset(ids, months, matrix, np.array([int(r['label']) for r in rows]), features, digest.hexdigest())
+
+
+def load_dataset(path):
+    return load_sparse(path) if Path(path).is_dir() else load_csv(path)
 
 
 def initial_split(data, initial_months, seed):

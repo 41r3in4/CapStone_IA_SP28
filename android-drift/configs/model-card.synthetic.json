@@ -1,0 +1,11 @@
+{
+  "model_id": "SYNTHETIC_FIXTURE_ONLY",
+  "dataset_source": "Generated manifest archive fixtures, not Android research data",
+  "training_data_kind": "synthetic",
+  "threshold": 0.5,
+  "limitations": [
+    "Software plumbing test only; no Android malware accuracy evidence",
+    "Manifest-only features, no DEX/API extraction",
+    "Score is not a verified calibrated probability"
+  ]
+}

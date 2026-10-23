@@ -1,4 +1,5 @@
 {
+  "training_data_kind": "synthetic",
   "data": "data/demo.csv",
   "output": "runs/demo",
   "initial_months": 12,

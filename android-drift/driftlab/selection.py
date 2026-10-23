@@ -14,7 +14,7 @@ def conformal_credibility(model, X, calibration_X, calibration_y):
     predicted = model.predict_proba(X)
     calibration_prob = model.predict_proba(calibration_X)
     labels = (predicted >= 0.5).astype(int)
-    cred = np.zeros(len(X))
+    cred = np.zeros(X.shape[0])
     for label in (0, 1):
         reference = calibration_prob[calibration_y == label]
         if not len(reference):
@@ -44,13 +44,14 @@ def latent_distance(model, X, reference_X, reference_y):
 
 
 def select(model, X, budget, strategy, rng, calibration_X, calibration_y,
-           reference_X, reference_y, weights):
-    if not 0 <= budget <= len(X):
+           reference_X, reference_y, weights, diversity=True):
+    n = X.shape[0]
+    if not 0 <= budget <= n:
         raise ValueError("Invalid selection budget")
     if budget == 0:
-        return np.array([], dtype=int), np.zeros(len(X))
+        return np.array([], dtype=int), np.zeros(n)
     if strategy == "random":
-        return rng.choice(len(X), budget, replace=False), np.zeros(len(X))
+        return rng.choice(n, budget, replace=False), np.zeros(n)
     p = model.predict_proba(X)
     uncertainty = 1 - 2 * np.abs(p - 0.5)
     if strategy == "uncertainty":
@@ -66,10 +67,10 @@ def select(model, X, budget, strategy, rng, calibration_X, calibration_y,
     else:
         raise ValueError(f"Unknown selector {strategy}")
     # Random tie-breaking is reproducible with a dedicated RNG.
-    ordered = np.lexsort((rng.random(len(X)), -score))
-    if strategy != "hybrid":
+    ordered = np.lexsort((rng.random(n), -score))
+    if strategy != "hybrid" or not diversity:
         return ordered[:budget], score
-    candidates = ordered[:min(2*budget, len(X))]
+    candidates = ordered[:min(2*budget, n)]
     z = model.encode(X[candidates])
     chosen = [0]
     distance_to_chosen = np.sum((z-z[0])**2, axis=1)

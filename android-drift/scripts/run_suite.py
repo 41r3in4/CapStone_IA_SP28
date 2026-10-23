@@ -10,7 +10,16 @@ from driftlab.experiment import run,write_csv
 def main():
     p=argparse.ArgumentParser();p.add_argument('--config',default='configs/demo.json')
     p.add_argument('--output',default='runs/suite');p.add_argument('--full-grid',action='store_true')
+    p.add_argument('--mode',choices=['baselines','selectors','updaters','closed_loop','ablation'])
+    p.add_argument('--query-manifests',help='JSON mapping budget:seed to manifest path')
     a=p.parse_args();base=json.loads(Path(a.config).read_text(encoding='utf-8'))
+    if a.mode or a.full_grid or base.get('training_data_kind') != 'synthetic':
+        from driftlab.suite import run_matrix
+        run_matrix(base,a.output,a.mode or 'closed_loop',
+                   budgets=(.01,.02,.05) if a.full_grid else (base['budget'],),
+                   seeds=range(5) if a.full_grid else (base['seed'],),
+                   query_manifests=json.loads(Path(a.query_manifests).read_text()) if a.query_manifests else None)
+        return
     target=Path(a.output)
     if target.exists(): raise FileExistsError(target)
     target.mkdir(parents=True)

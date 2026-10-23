@@ -1,5 +1,7 @@
 # Chi tiết thực hiện với project
 
+Cập nhật B → E: xem [STAGES_B_E.md](STAGES_B_E.md), [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) và `../VERIFICATION.json`. Các mục sau giữ bối cảnh starter; chức năng đã bổ sung được ghi rõ bên dưới.
+
 ## A. Đọc mã theo thứ tự
 
 1. `data.py`: định dạng, kiểm tra dữ liệu, 12 tháng đầu và các tập giữ riêng.
@@ -17,7 +19,7 @@ Chạy lệnh README. Xem splits.csv để xác nhận ba tập ban đầu khôn
 Chạy frozen và full_oracle. Xem monthly_metrics và summary. Mục đích: hiểu mốc không thích nghi và mốc nhiều nhãn. Không lấy số mô phỏng làm minh chứng drift Android; không đòi hỏi đường cong phải giảm hoặc phương pháp mới phải thắng.
 
 ### Bước 3 - Tách hiệu quả chọn mẫu
-Giữ updater=replay; chạy random, uncertainty, conformal, distance, hybrid. Giữ seed, beta, dữ liệu và mô hình ban đầu. Mục đích: đánh giá toàn vòng AL với từng selector. Nếu muốn cô lập updater, lưu chuỗi ID truy vấn rồi phát lại cùng chuỗi cho các updater; runner hiện tại chưa có chế độ replay query manifest.
+Giữ updater=replay; chạy random, uncertainty, conformal, distance, hybrid. Giữ seed, beta, dữ liệu và mô hình ban đầu. Mục đích: đánh giá toàn vòng AL với từng selector. Để cô lập updater, dùng `--query-manifest` hoặc suite `--mode updaters` với mapping manifest theo budget/seed. Chế độ AL khép kín và fixed-query replay được ghi riêng trong summary.
 
 ### Bước 4 - Tách hiệu quả cập nhật
 Thử finetune, replay, replay_ewc và replay_ewc_reg. Chú ý selector phụ thuộc mô hình nên chuỗi mẫu có thể khác; gọi đây là so sánh end-to-end nếu chưa cố định truy vấn. Đầu ra: bảng AUT, tổng nhãn và thời gian từng phương pháp.
@@ -34,7 +36,7 @@ Adapter chỉ lấy file YYYY-MM_selected.npz, loại file gộp để tránh nh
 .\.venv\Scripts\python.exe -m driftlab run --data data/real_small.csv --updater frozen --output runs/real_b0
 ```
 
-Nếu NPZ chứa object pickle, mặc định importer sẽ từ chối. Chỉ thêm `--trusted-pickle` khi đã xác minh nguồn tệp gốc; không dùng cho tệp lạ. Sparse object cần SciPy. Giới hạn phần tử ngăn densify ngoài ý muốn, không đảm bảo đủ RAM cho mọi máy. Khi dữ liệu rộng, viết sparse loader thay vì nâng giới hạn tùy tiện.
+Nếu NPZ chứa object pickle, mặc định importer sẽ từ chối. Chỉ thêm `--trusted-pickle` khi đã xác minh nguồn tệp gốc; không dùng cho tệp lạ. Loader CSR mới nhận numeric SciPy NPZ và metadata riêng, không cần bật pickle. Giới hạn phần tử của adapter CSV vẫn giữ nguyên; xem `STAGES_B_E.md` để dùng sparse trực tiếp.
 
 `--deduplicate` giữ vector xuất hiện đầu tiên theo tháng và ghi dropped.csv. Cần thảo luận chính sách này trong protocol: vector giống nhau có thể là ứng dụng khác; xung đột nhãn cần được phân tích, không âm thầm chọn nhãn thuận lợi.
 
@@ -56,4 +58,4 @@ Chạy 3 beta × 5 seed sau khi khóa protocol. Đo peak RAM/GPU bằng công c�
 - Calibration cố định từ quá khứ có thể lỗi thời. Conformal score không bảo đảm validity khi exchangeability bị vi phạm.
 - Lưu cả tử/mẫu số hồi quy; trường hợp không đủ mẫu trả None/N/A.
 - Final month không cập nhật; nếu đổi giao thức phải ghi rõ cách tính số nhãn.
-- Checkpoint không lưu RNG và lịch sử để resume. Cần thêm tính năng này trước chạy dài cần phục hồi.
+- Snapshot `state_YYYY-MM.json` đi cùng `model_YYYY-MM.npz` lưu RNG, lịch sử, nhãn quan sát và reservoir; resume sang thư mục mới có kiểm tra dataset/schema/config.

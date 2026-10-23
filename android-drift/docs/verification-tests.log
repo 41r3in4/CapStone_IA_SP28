@@ -1,0 +1,87 @@
+test_binary_xml (test_apk.APKTests.test_binary_xml) ... ok
+test_checkpoint_contract_and_math (test_apk.APKTests.test_checkpoint_contract_and_math) ... ok
+test_extract_and_report (test_apk.APKTests.test_extract_and_report) ... ok
+test_feature_contract (test_apk.APKTests.test_feature_contract) ... ok
+test_invalid_archive (test_apk.APKTests.test_invalid_archive) ... ok
+test_end_to_end (test_core.CoreTests.test_end_to_end) ... 2021-01: F1=0.2777777777777778, labels=0, memory=30
+2021-02: F1=0.2727272727272727, labels=0, memory=30
+2021-01: F1=0.2777777777777778, labels=80, memory=30
+2021-02: F1=0.375, labels=0, memory=30
+2021-01: F1=0.2777777777777778, labels=4, memory=30
+2021-02: F1=0.2727272727272727, labels=0, memory=30
+2021-01: F1=0.2777777777777778, labels=4, memory=30
+2021-02: F1=0.3, labels=0, memory=30
+2021-01: F1=0.2777777777777778, labels=4, memory=30
+2021-02: F1=0.2727272727272727, labels=0, memory=30
+2021-01: F1=0.2777777777777778, labels=4, memory=30
+2021-02: F1=0.2727272727272727, labels=0, memory=30
+2021-01: F1=0.2777777777777778, labels=4, memory=30
+2021-02: F1=0.2727272727272727, labels=0, memory=30
+ok
+test_fisher (test_core.CoreTests.test_fisher) ... ok
+test_gradient (test_core.CoreTests.test_gradient) ... ok
+test_memory (test_core.CoreTests.test_memory) ... ok
+test_metrics (test_core.CoreTests.test_metrics) ... ok
+test_oracle_guard (test_core.CoreTests.test_oracle_guard) ... ok
+test_selectors (test_core.CoreTests.test_selectors) ... ok
+test_split_disjoint (test_core.CoreTests.test_split_disjoint) ... ok
+test_cli_audit_run_resume_and_lock (test_extensions.ExtensionTests.test_cli_audit_run_resume_and_lock) ... ok
+test_fixture_build_train_export_predict_and_mismatch (test_extensions.ExtensionTests.test_fixture_build_train_export_predict_and_mismatch) ... 2024-05: F1=1.0, labels=1, memory=9
+2024-06: F1=1.0, labels=0, memory=9
+ok
+test_matrix_and_svm (test_extensions.ExtensionTests.test_matrix_and_svm) ... ok
+test_monitor_labels_never_train_or_select (test_extensions.ExtensionTests.test_monitor_labels_never_train_or_select) ... 2021-01: F1=0.21621621621621623, labels=4, memory=30
+2021-02: F1=0.13793103448275862, labels=4, memory=30
+2021-03: F1=0.07692307692307693, labels=0, memory=30
+2021-01: F1=0.21621621621621623, labels=4, memory=30
+2021-02: F1=0.13793103448275862, labels=4, memory=30
+2021-03: F1=0.07692307692307693, labels=0, memory=30
+ok
+test_resume_equivalence_and_mismatch (test_extensions.ExtensionTests.test_resume_equivalence_and_mismatch) ... 2021-01: F1=0.2222222222222222, labels=4, memory=30
+2021-02: F1=0.14285714285714285, labels=4, memory=30
+2021-03: F1=0.08695652173913043, labels=0, memory=30
+2021-01: F1=0.2222222222222222, labels=4, memory=30
+2021-02: F1=0.14285714285714285, labels=4, memory=30
+2021-03: F1=0.08695652173913043, labels=0, memory=30
+ok
+test_small_matrix_analysis_and_lock_guard (test_extensions.ExtensionTests.test_small_matrix_analysis_and_lock_guard) ... 2021-01: F1=0.18181818181818182, labels=1, memory=30
+2021-02: F1=0.14285714285714285, labels=1, memory=30
+2021-03: F1=0.32, labels=0, memory=30
+2021-01: F1=0.18181818181818182, labels=1, memory=30
+2021-02: F1=0.14285714285714285, labels=1, memory=30
+2021-03: F1=0.32, labels=0, memory=30
+2021-01: F1=0.18181818181818182, labels=1, memory=30
+2021-02: F1=0.14285714285714285, labels=1, memory=30
+2021-03: F1=0.32, labels=0, memory=30
+2021-01: F1=0.18181818181818182, labels=1, memory=30
+2021-02: F1=0.16666666666666666, labels=1, memory=30
+2021-03: F1=0.23529411764705882, labels=0, memory=30
+2021-01: F1=0.18181818181818182, labels=1, memory=30
+2021-02: F1=0.14285714285714285, labels=1, memory=30
+2021-03: F1=0.32, labels=0, memory=30
+2021-01: F1=0.18181818181818182, labels=1, memory=30
+2021-02: F1=0.14285714285714285, labels=1, memory=30
+2021-03: F1=0.32, labels=0, memory=30
+ok
+test_sparse_run_without_densification (test_extensions.ExtensionTests.test_sparse_run_without_densification) ... 2021-01: F1=0.2222222222222222, labels=4, memory=30
+2021-02: F1=0.09090909090909091, labels=4, memory=30
+2021-03: F1=0.0, labels=0, memory=30
+ok
+test_statistics_and_metric_edges (test_extensions.ExtensionTests.test_statistics_and_metric_edges) ... ok
+test_end_to_end_no_future_vocabulary_and_no_overwrite (test_preparation.PreparationTests.test_end_to_end_no_future_vocabulary_and_no_overwrite) ... ok
+test_exact_vocabulary_fit_ids (test_preparation.PreparationTests.test_exact_vocabulary_fit_ids) ... ok
+test_invalid_metadata (test_preparation.PreparationTests.test_invalid_metadata) ... ok
+test_missing_extraction_limit_and_conflict (test_preparation.PreparationTests.test_missing_extraction_limit_and_conflict) ... ok
+test_replay_validation (test_protocol.ProtocolTests.test_replay_validation) ... ok
+test_sparse_loader (test_protocol.ProtocolTests.test_sparse_loader) ... ok
+test_temporal_and_preprocessing_no_future_access (test_protocol.ProtocolTests.test_temporal_and_preprocessing_no_future_access) ... ok
+test_temporal_run_and_fixed_query_ewc (test_protocol.ProtocolTests.test_temporal_run_and_fixed_query_ewc) ... 2021-01: F1=0.21621621621621623, labels=4, memory=256
+2021-02: F1=0.07407407407407407, labels=0, memory=256
+2021-01: F1=0.21621621621621623, labels=4, memory=256
+2021-02: F1=0.07142857142857142, labels=0, memory=256
+ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 4.802s
+
+OK

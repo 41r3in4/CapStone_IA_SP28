@@ -1,15 +1,76 @@
 {
   "date": "2026-10-23",
-  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
-  "numpy": "2.3.5",
-  "tests": "8 unittest tests passed; all 7 updater paths exercised",
-  "demo": "20 synthetic months; 12 initial months, 8 test months",
-  "suite": "7 configurations completed on synthetic data",
-  "importer": "dense numeric monthly NPZ, zero/nonzero mapping, earliest-vector dedup smoke-tested",
-  "not_verified": [
-    "Real Android datasets",
-    "Sparse NPZ adapter path requiring optional SciPy",
-    "Browser rendering on user machine",
-    "Full 3-budget/5-seed grid"
+  "timezone": "Asia/Bangkok",
+  "python": "3.14.7 | packaged by Anaconda, Inc. | (main, Aug 14 2026, 10:12:46) [MSC v.1942 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "dependencies": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "joblib": "1.6.0",
+    "threadpoolctl": "3.7.0",
+    "narwhals": "2.27.1",
+    "cloudpickle": "3.1.2"
+  },
+  "tests": {
+    "run": 29,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "successful": true,
+    "log": "docs\\verification-tests.log",
+    "log_sha256": "7c2b504c977880d5aa54ac623b805fd6a946f4c53249d11a9945d8cb23461524"
+  },
+  "git_diff_check": {
+    "command": [
+      "git",
+      "-c",
+      "safe.directory=H:/CapStone_IA_SP_28/CapStone_IA_SP_28",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "warning: in the working copy of 'android-drift/README.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'android-drift/configs/demo.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'android-drift/docs/IMPLEMENTATION.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'android-drift/driftlab/data.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'android-drift/driftlab/experiment.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'android-drift/driftlab/selection.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'android-drift/scripts/run_suite.py', LF will be replaced by CRLF the next time Git touches it\n"
+  },
+  "untracked_source_whitespace": [],
+  "elapsed_seconds": 5.665679600002477,
+  "source_sha256": {
+    "driftlab/analysis.py": "7cff79b9543621d4c452cef5334b8a3fffb2e9349f31785dc2be6450d31ce5ef",
+    "driftlab/apk.py": "8414eff8fa65269ce423a72b3b19ce2bb51046987c760b4cc1d43685df377d15",
+    "driftlab/data.py": "038294532cf00094e70ddc3db5be8bc07dec5ab6351da77ef4dbad06c6faa807",
+    "driftlab/experiment.py": "079d87098ef931f32ed98b9777e04f2624b13cb114dd1c964bfd004029b0fa19",
+    "driftlab/locking.py": "3a9d13d2b5a5ccbdbd54316e1a61aec3db44b67745d23f33b66ccbab1dfaa43b",
+    "driftlab/metrics.py": "5860f89de30a7ac2ddfb65b07bd2eb54f1b67b8f94618d18e6eb1acaa9ae4618",
+    "driftlab/model.py": "9315253f3f85ef5115ff9ddabe77f78c7b972fe6623d2c0c7654f962e1c8efd1",
+    "driftlab/package.py": "feeb4c2af1ecec2f385b01b801dc8c2b99117a81a66c1edcbb2acf321024ae8f",
+    "driftlab/preparation.py": "ed504557cde25152193e3a11e4fbaf09417b5a852c329f60bbda2187bbf6da6d",
+    "driftlab/protocol.py": "b80b0ad43bf3b34e09494e4df217631cc8b56355d6019a257e497253b84a9a63",
+    "driftlab/queries.py": "de7498d4186e992285bd5b11822fb8e320a60ec3438e14f8000e9204fc064779",
+    "driftlab/report.py": "f43552f660a05e2f63d61f049bc7d827ebef81538f52e39420c9484cdf95f1ee",
+    "driftlab/resources.py": "1aee55ee00225abaa0b9cf8d5255dac2414566d5ffb8bc4834a9ff099acb07b3",
+    "driftlab/resume.py": "648d9f09bc466f34b4d8707b83f2e4b561e848a71e3ebaf40beb170b56b47e96",
+    "driftlab/selection.py": "ba677fc9fb349bc2d75095474d4bc4d691fab1507feb182d331f05815b28954a",
+    "driftlab/statistics.py": "46b683e45a19ed0952283440c9911b32475168f6f3c62686bfa431c0980f2adc",
+    "driftlab/suite.py": "345db647569852d9fbd41331246bd6d83467d8c34c1ac31baa7291cfc46dd271",
+    "driftlab/svm.py": "dd8e72a513b5b575fedbc0fb3e051cf0a1808d1bc6c2108991b11996beaa9689",
+    "driftlab/validation.py": "95e99a0d78416816d3324a522046f2fb6e6de007620ed4f577f55c3707ffe6a7",
+    "driftlab/__init__.py": "976a7fb601e8128dc51179f31efe23d4c93971e9461acd58d52da9060000d03f",
+    "driftlab/__main__.py": "15569dd28cfd24b29737de9cf85f5ec592ec47da8a5071221f37217511be4a4d",
+    "tests/test_apk.py": "ee44efb7658a2f12b20156783efecbe853157a880e808c64cf73f005dcbe5d16",
+    "tests/test_core.py": "bb9c2927925e5077959e8ce62b903f85907d435f731f7d45241b348e47c898d6",
+    "tests/test_extensions.py": "737607eca0e6b5ea6a93e9117b740f96e80ea9e9dd1afe5e6c1379e97b78da71",
+    "tests/test_preparation.py": "79cd49d9f1cf25f9915ee3a921ef2328ebb6754785872ad6503735468c73fb5d",
+    "tests/test_protocol.py": "6493d211daf78a9ad81c578bb8a4d7e28c42c692d18aededbdec55e945edef68",
+    "scripts/import_npz.py": "9c09d89751a335134b78696664fe9252b144cd44ee64be380f6c486b1bda4792",
+    "scripts/run_suite.py": "a569f4eb6f0b7c4d75f0a1b647901047e338c1420bdad2de71c1450611fca76d",
+    "scripts/verify.py": "8e1a970a846c7299b5dfebdc41b84e86c4e3984cfe8158f4932814893c13b1c3"
+  },
+  "scope": "Generated synthetic fixtures and software contracts only",
+  "not_run": [
+    "Real Android research grid",
+    "Real APK malware accuracy",
+    "Real model calibration",
+    "GPU workload"
   ]
 }

@@ -1,0 +1,31 @@
+{
+  "training_data_kind": "real_android",
+  "data": "data/real/dataset.csv",
+  "output": "runs/real_protocol_v1",
+  "protocol_lock": "data/real/protocol_lock.json",
+  "temporal": {
+    "train_through": "2022-08",
+    "validation_through": "2022-09",
+    "calibration_through": "2022-10",
+    "monitor_through": "2022-12"
+  },
+  "initial_months": 12,
+  "budget": 0.01,
+  "seed": 0,
+  "selector": "hybrid",
+  "updater": "replay_ewc_reg",
+  "hidden": 24,
+  "epochs": 24,
+  "update_epochs": 10,
+  "batch_size": 64,
+  "learning_rate": 0.03,
+  "memory_size": 256,
+  "fisher_samples": 64,
+  "ewc_lambda": 4.0,
+  "reg_lambda": 0.5,
+  "weights": [0.5, 0.25, 0.25],
+  "validation_candidates": [
+    {"hidden": 16, "epochs": 12, "learning_rate": 0.01, "batch_size": 64},
+    {"hidden": 24, "epochs": 24, "learning_rate": 0.03, "batch_size": 64}
+  ]
+}

@@ -66,6 +66,16 @@ def validate(c):
 
 
 def run(config):
+    if config.get('blas_threads') is not None:
+        from threadpoolctl import threadpool_limits
+        if type(config['blas_threads']) is not int or config['blas_threads']<1:
+            raise ValueError('blas_threads must be a positive integer')
+        with threadpool_limits(limits=config['blas_threads']):
+            return _run(config)
+    return _run(config)
+
+
+def _run(config):
     run_start = time.perf_counter()
     c = dict(config); validate(c)
     out = Path(c["output"])
@@ -73,7 +83,15 @@ def run(config):
         raise FileExistsError(f"Output already exists: {out}; choose a new --output")
     d = load_dataset(c["data"])
     validation = np.array([], dtype=int)
-    if c.get('temporal'):
+    if c.get('initial_range'):
+        if c.get('temporal') or c.get('validation_candidates'):
+            raise ValueError('Pooled initial range does not expose months for temporal validation')
+        if c['selector']!='random' or c['updater'] not in {'frozen','replay'}:
+            raise ValueError('Pooled range smoke currently supports only frozen or random replay')
+        from .protocol import range_initial_split
+        groups,future_months=range_initial_split(d,c['initial_range'])
+        fit,cal,monitor=[groups[k] for k in ('fit','calibration','regression_monitor')]
+    elif c.get('temporal'):
         from .protocol import temporal_split
         groups = temporal_split(d, **c['temporal'])
         fit, cal, monitor = [groups[k] for k in ('fit', 'calibration', 'regression_monitor')]
@@ -108,6 +126,9 @@ def run(config):
         audit_result['feature_provenance'] = json.loads(provenance_path.read_text(encoding='utf-8'))
     else:
         audit_result['feature_provenance'] = 'External feature vocabulary provenance unavailable; train-only column selection cannot prove upstream extraction did not use future data'
+    if d.provenance:
+        audit_result['feature_provenance']={k:v for k,v in d.provenance.items() if k!='records'}
+    audit_result['feature_schema']=d.feature_schema
     query_replay = None
     if c.get('query_manifest'):
         from .queries import read_queries
@@ -131,6 +152,11 @@ def run(config):
     write_csv(out/'splits.csv',manifest)
     (out/'data_audit.json').write_text(json.dumps(audit_result, indent=2), encoding='utf-8')
     (out/'preprocessing.json').write_text(json.dumps(preprocessing, indent=2), encoding='utf-8')
+    if d.provenance:
+        (out/'source_provenance.json').write_text(json.dumps(d.provenance,indent=2),encoding='utf-8')
+    if c.get('source_audit'):
+        import shutil
+        shutil.copyfile(c['source_audit'],out/'source_dataset_audit.json')
     if c.get('temporal') and c.get('validation_candidates'):
         (out/'validation.json').write_text(json.dumps(validation_result, indent=2), encoding='utf-8')
     logs=[]; query_logs=[]; prediction_logs=[]
@@ -223,8 +249,9 @@ def run(config):
                    evaluation_seconds=evaluation_seconds,
                    month_seconds=time.perf_counter()-month_start)
         logs.append(row)
-        # Checkpoints are for inference/inspection; resume training not implemented.
+        # Drebin checkpoints retain their distinct schema; no manifest APK inference.
         np.savez_compressed(out/f'model_{month}.npz',**model.p,mean=mean,scale=scale,feature_names=np.array(feature_names),
+                            feature_schema=np.array(d.feature_schema),
                             memory_indices=np.array(memory.indices),month=np.array(month))
         from .resume import save_state
         save_state(out/f'state_{month}.json', c, d, preprocessing, out/f'model_{month}.npz',
@@ -233,6 +260,9 @@ def run(config):
         if c.get('stop_after_month') == month:
             break
     write_csv(out/'monthly_metrics.csv',logs); write_csv(out/'queries.csv',query_logs); write_csv(out/'predictions.csv',prediction_logs)
+    if not query_logs:
+        with (out/'queries.csv').open('w',encoding='utf-8',newline='') as stream:
+            csv.writer(stream).writerow(['month','sample_id','label','selection_score'])
     query_manifest_rows = [dict(run_id=c.get('run_id',out.name),month=month,
               sample_id=r['sample_id'],query_order=order)
               for month in future_months for order,r in enumerate([q for q in query_logs if q['month']==month])]
@@ -243,7 +273,7 @@ def run(config):
     duplicate_future = sum(len(set(r['sample_ids']) & future_ids) for r in audit_result['duplicate_vectors'] if set(r['sample_ids']) & fit_ids)
     summary=dict(aut_f1=aut([r['f1'] for r in logs]),queried_labels=sum(r['queried_labels'] for r in logs),
                  initial_fit_labels=len(fit),initial_calibration_labels=len(cal),initial_monitor_labels=len(monitor),
-                 initial_validation_labels=len(validation), protocol='temporal' if c.get('temporal') else 'stratified_demo',
+                 initial_validation_labels=len(validation), protocol='pooled_initial_range_smoke' if c.get('initial_range') else ('temporal' if c.get('temporal') else 'stratified_demo'),
                  completed=bool(logs and logs[-1]['month'] == future_months[-1]),
                  completed_month=logs[-1]['month'] if logs else None,
                  total_seconds=time.perf_counter()-run_start,
@@ -262,6 +292,13 @@ def run(config):
     from .resources import peak_rss
     summary['peak_ram'] = peak_rss()
     summary['budget_rule'] = 'ceil(beta * current month samples); final month has no query/update; full_oracle uses all eligible labels'
+    summary['feature_schema']=d.feature_schema
+    if c.get('initial_range'):
+        summary['notes'] += ['Pipeline smoke only, not final research results.',
+            'Initial source is a pooled year with no individual row months; all initial rows fit, no validation/calibration/monitor labels.',
+            'Regression monitor unavailable; regression rates are N/A.',
+            'Drebin selected vocabulary cannot be used with the manifest APK extractor.',
+            'Upstream author selection and original dates/labels have not been independently authenticated.']
     summary['total_selection_seconds'] = sum(r['selection_seconds'] for r in logs)
     summary['source_sha256'] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(Path(__file__).parent.glob('*.py'))}
     import importlib.metadata

@@ -14,6 +14,8 @@ class Dataset:
     y: np.ndarray
     features: list
     sha256: str
+    feature_schema: str = 'external-unspecified'
+    provenance: dict | None = None
 
 
 def load_csv(path):
@@ -80,6 +82,9 @@ def load_sparse(path):
 
 
 def load_dataset(path):
+    if Path(path).suffix == '.json':
+        from .drebin import load_spec
+        return load_spec(path)
     return load_sparse(path) if Path(path).is_dir() else load_csv(path)
 
 

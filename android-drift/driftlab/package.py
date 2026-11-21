@@ -23,6 +23,8 @@ def export_package(run_dir, output, declaration):
     if not declaration['model_id'] or not declaration['dataset_source'] or not 0 < declaration['threshold'] < 1:
         raise ValueError('Invalid model declaration')
     config = json.loads((root/'config.json').read_text(encoding='utf-8'))
+    if summary.get('feature_schema','external-unspecified').startswith('drebin'):
+        raise ValueError('Drebin schema cannot be exported as an android-manifest-v1 package')
     if config.get('training_data_kind') != declaration['training_data_kind']:
         raise ValueError('Model declaration kind must match recorded run kind')
     with (root/'splits.csv').open(encoding='utf-8',newline='') as stream:

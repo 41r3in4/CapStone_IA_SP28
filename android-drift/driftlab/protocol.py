@@ -7,6 +7,25 @@ from pathlib import Path
 import numpy as np
 
 
+def range_initial_split(data, period):
+    """Use a declared pooled source period without inventing within-period dates."""
+    from .drebin import SCHEMA, month_sequence
+    if data.feature_schema!=SCHEMA or not data.provenance:
+        raise ValueError('Initial range requires audited Drebin provenance')
+    import re
+    match=re.fullmatch(r'([0-9]{4}-(?:0[1-9]|1[0-2]))to([0-9]{4}-(?:0[1-9]|1[0-2]))',period)
+    if not match or match[1]>match[2]: raise ValueError('Invalid initial pooled period')
+    fit=np.flatnonzero(data.months==period)
+    future=sorted(set(data.months)-{period})
+    if not len(fit) or set(data.y[fit])!={0,1} or not future:
+        raise ValueError('Need both initial classes and future months')
+    expected=month_sequence(match[2],future[-1])[1:]
+    if future!=expected: raise ValueError('Future evaluation must be contiguous months after initial range')
+    empty=np.array([],dtype=int)
+    return dict(fit=fit,calibration=empty,regression_monitor=empty,
+                future_test=np.flatnonzero(np.isin(data.months,future))),future
+
+
 def temporal_split(data, train_through, validation_through, calibration_through, monitor_through):
     boundaries = [train_through, validation_through, calibration_through, monitor_through]
     months = sorted(set(data.months))

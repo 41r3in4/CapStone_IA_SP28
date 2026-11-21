@@ -163,6 +163,8 @@ def predict(report, checkpoint, card_path, fixture=False):
     threshold = float(card.get('threshold', 0.5))
     if not 0 < threshold < 1: raise ValueError('Threshold must be in (0,1)')
     with np.load(checkpoint, allow_pickle=False) as c:
+        if 'feature_schema' in c and str(c['feature_schema']) not in (SCHEMA,'external-unspecified'):
+            raise ValueError('Checkpoint schema is incompatible with manifest APK extraction')
         names = c['feature_names'].tolist()
         x = np.array([vectorize(report['feature_tokens'], names)], dtype=float)
         dim = len(names)

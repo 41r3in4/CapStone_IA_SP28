@@ -1,5 +1,6 @@
 """Run local checks and write measured verification artifacts, never APK execution."""
 import contextlib
+import argparse
 from datetime import datetime, timedelta, timezone
 import hashlib
 import importlib.metadata
@@ -18,10 +19,16 @@ sys.path.insert(0,str(ROOT))
 
 
 def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--output',help='New verification directory; preserves existing verification outputs')
+    args=parser.parse_args()
     os.chdir(ROOT)
     warnings.simplefilter('error',ResourceWarning)
     start=time.perf_counter()
-    log=ROOT/'docs'/'verification-tests.log'
+    destination=ROOT
+    if args.output:
+        destination=Path(args.output).resolve(); destination.mkdir(parents=True,exist_ok=False)
+    log=destination/'verification-tests.log' if args.output else ROOT/'docs'/'verification-tests.log'
     with log.open('w',encoding='utf-8') as stream, contextlib.redirect_stdout(stream):
         result=unittest.TextTestRunner(stream=stream,verbosity=2).run(unittest.defaultTestLoader.discover('tests'))
     repository=ROOT.parent
@@ -43,7 +50,7 @@ def main():
         source_sha256={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
         scope='Generated synthetic fixtures and software contracts only',
         not_run=['Real Android research grid','Real APK malware accuracy','Real model calibration','GPU workload'])
-    (ROOT/'VERIFICATION.json').write_text(json.dumps(verification,indent=2),encoding='utf-8')
+    (destination/'VERIFICATION.json').write_text(json.dumps(verification,indent=2),encoding='utf-8')
     print(json.dumps(dict(tests=result.testsRun,successful=result.wasSuccessful(),
                          git_diff_check=diff.returncode,source_whitespace_errors=len(whitespace)),indent=2))
     return 0 if result.wasSuccessful() and diff.returncode==0 and not whitespace else 1
